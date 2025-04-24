@@ -9,6 +9,12 @@ export default function App() {
     // Request permissions on mount
     messaging().requestPermission();
     notifee.requestPermission();
+    messaging().registerDeviceForRemoteMessages();
+    messaging()
+      .getToken()
+      .then((token) => {
+        console.log("[FCM TOKEN] Device token:", token);
+      });
 
     // Foreground listener
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
