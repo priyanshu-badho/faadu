@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "576587664708",
+    "project_id": "faadu-a0356",
+    "storage_bucket": "faadu-a0356.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576587664708:android:082bdbd71ca4f8fc689b11",
+        "android_client_info": {
+          "package_name": "com.priyanshudixit.faadu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAY3K8MG_jdQctM410yErQJCD1z3JEj1g0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

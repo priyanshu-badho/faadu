@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.priyanshudixit.faadu"
+      "package": "com.priyanshudixit.faadu",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
