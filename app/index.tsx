@@ -1,88 +1,57 @@
-// App.tsx
 import React, { useEffect } from "react";
-import { View, Text, Button, Alert } from "react-native";
-import messaging from "@react-native-firebase/messaging";
+import { View, Button, Text } from "react-native";
 import notifee, { AndroidImportance } from "@notifee/react-native";
+import messaging from "@react-native-firebase/messaging";
 
-export default function App() {
+notifee.requestPermission();
+
+notifee.createChannel({
+  id: "default",
+  name: "Default Channel",
+});
+
+export default function Screen() {
   useEffect(() => {
-    // Request permissions on mount
-    messaging().requestPermission();
-    notifee.requestPermission();
-    messaging().registerDeviceForRemoteMessages();
-    messaging()
-      .getToken()
-      .then((token) => {
-        console.log("[FCM TOKEN] Device token:", token);
-      });
-
-    // Foreground listener
-    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      handleIncomingNotification(remoteMessage?.data);
-    });
-
-    // Background message handler
     messaging().setBackgroundMessageHandler(async (remoteMessage) => {
       const data = remoteMessage?.data;
 
-      if (data?.showNotification === "true") {
-        await notifee.displayNotification({
-          title: data.title || "Notification",
-          body: data.body || "",
-          android: {
-            channelId: "default",
-            importance: AndroidImportance.HIGH,
-          },
-        });
-      }
-
-      console.log("[BG HANDLER] Notification received:", data);
-    });
-
-    // Check if app was opened from a notification
-    messaging()
-      .getInitialNotification()
-      .then((remoteMessage) => {
-        if (remoteMessage) {
-          console.log(
-            "[INITIAL NOTIF] Opened from notification:",
-            remoteMessage.data
-          );
-        }
-      });
-
-    return () => unsubscribe();
-  }, []);
-
-  const handleIncomingNotification = async (data: any) => {
-    console.log("[FOREGROUND] Notification received:", data);
-
-    if (data?.showNotification === "true") {
-      await notifee.displayNotification({
-        title: data.title || "Notification",
-        body: data.body || "",
+      notifee.displayNotification({
+        title: data?.title,
+        body: data?.body,
         android: {
           channelId: "default",
           importance: AndroidImportance.HIGH,
+          pressAction: {
+            id: "default",
+          },
         },
       });
-    }
-  };
+
+      console.log("[BG HANDLER] Notification received:", data);
+    });
+  }, []);
+
+  useEffect(() => {
+    notifee.onBackgroundEvent(async (event) => {
+      const { type, detail } = event;
+      console.log("Background Event: ", event.detail.notification?.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    const getNotifications = async () => {
+      const ini = await notifee.getInitialNotification();
+      console.log("Initial Notification: ", JSON.stringify(ini, null, 2));
+      const not = await notifee.getDisplayedNotifications();
+      console.log("Notifications: ", JSON.stringify(not[0], null, 2));
+      await notifee.cancelAllNotifications();
+    };
+    getNotifications();
+  }, []);
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Expo + FCM + Notifee</Text>
-      <Button
-        title="Test Notification Data"
-        onPress={() => {
-          const mockData = {
-            title: "Hello!",
-            body: "This is a test notification",
-            showNotification: "true",
-          };
-          handleIncomingNotification(mockData);
-        }}
-      />
+    <View>
+      <Text>Push Notification Example</Text>
     </View>
   );
 }
